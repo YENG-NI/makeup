@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/reset.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav></nav>
+        <div class="mainBanner"></div>
+    </header>
+    <section>
+        <div class="searchForm-container">
+            <form action="" id="searchTarget">
+                <input type="text" class="product" placeholder="제품명을 검색하세요">
+            </form>
+            <form action="" id="searchBrand">
+                <input type="text" class="Brand" placeholder="브랜드명을 검색하세요">
+            </form>
+        </div>
+
+        <div class="list-container">
+            <div class="list-contents">
+                <div class="list-item">
+                    <div class="img-box"><img src="" alt=""></div>
+                    <div class="product-name"></div>
+                    <div class="product-price"></div>
+                    <div class="product-detail">
+                        <a href="">자세히보기</a>
+                    </div>
+                    <div class="product-colors">
+                        <ul>
+                            <li></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <script>
+        const URL = 'http://makeup-api.herokuapp.com/api/v1/products.json';
+
+        let makeupData=[];
+        const getMakeupList = () => { // 약 900개
+            fetch(URL)
+            .then( makeups => makeups.json() )
+            .then( makeups => {
+                console.log( makeups );
+                makeupData = makeups;
+                productPrintScreen();
+            })
+        }
+
+        // 이름이 왤케 길어요..
+        const productPrintScreen = () => {
+            const productName = document.querySelector('.product-name');
+            productName.innerHTML = makeupData[0].name;
+
+            const productPrice = document.querySelector('.product-price');
+            productPrice.innerHTML = `${makeupData[0].price_sign} ${makeupData[0].price} ${makeupData[0].currency}`;
+
+            const productDetailUrl = document.querySelector('.product-detail a');
+            productDetailUrl.setAttribute('href', makeupData[0].product_link); // url
+            // < a href='url'>
+
+            /* 
+            const imgBox = document.querySelector('.img-box img');
+            imgBox.setAttribute('src', makeupData[0].api_featured_image); // url
+            imgBox.setAttribute('alt', makeupData[0].description); // alt
+            // < img src="path">
+            */
+
+            // const productColors = document.querySelector('.product-colors li');
+            const productColors = document.querySelector('.product-colors ul');
+
+            let colors = makeupData[0].product_colors.slice(0, 5); // 배열의 데이터를 0번부터 5번까지 잘라서 가져온다.
+
+            colors.forEach(color => {
+                const li = document.createElement('li');
+                li.style.background = color.hex_value;
+                li.innerHTML = color.colour_name;
+
+                productColors.appendChild(li);
+                // ul > li
+            });
+
+        }  // productPrintScreen End
+
+        getMakeupList();
+
+    </script>
+</body>
+</html>
